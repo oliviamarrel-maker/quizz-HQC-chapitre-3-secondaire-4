@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quizz HQC — Chapitre 3 — Sec. 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;
+  --surface:#1a1d27;
+  --surface2:#22263a;
+  --surface3:#2a2f45;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.13);
+  --text:#f0f0f5;
+  --text2:#9095b0;
+  --text3:#565b75;
+  --accent:#6c8ef5;
+  --accent-dim:#2a3460;
+  --accent-text:#a8baff;
+  --green:#3ecf8e;
+  --green-dim:#0d3024;
+  --green-text:#7dffc7;
+  --red:#f16060;
+  --red-dim:#3a0f0f;
+  --red-text:#ffaaaa;
+  --amber:#f5a623;
+  --amber-dim:#3a2800;
+  --radius:14px;
+  --radius-sm:8px;
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* ── HEADER ── */
+header{padding:2rem 2rem 1.5rem;border-bottom:1px solid var(--border);background:var(--surface)}
+.header-inner{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.header-eyebrow{font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.header-title{font-family:'Lora',serif;font-size:24px;font-weight:600;color:var(--text);line-height:1.25}
+.header-title em{font-style:italic;font-weight:400;color:var(--text2)}
+.header-stats{display:flex;gap:1.25rem}
+.hstat{text-align:right}
+.hstat-n{font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--accent);display:block}
+.hstat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem}
+.prog-inner{max-width:820px;margin:0 auto;padding:10px 0;display:flex;align-items:center;gap:12px}
+.prog-bar-bg{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.prog-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease}
+.prog-label{font-size:12px;color:var(--text3);white-space:nowrap}
+
+/* ── MAIN ── */
+main{max-width:820px;margin:0 auto;padding:2rem 1.5rem 4rem}
+
+/* ── FILTER TABS ── */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.75rem}
+.tab{font-family:'Sora',sans-serif;font-size:12px;font-weight:400;padding:5px 13px;border-radius:100px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.tab:hover{background:var(--surface2);color:var(--text)}
+.tab.active{background:var(--accent);color:#fff;border-color:transparent;font-weight:500}
+
+/* ── QUESTION CARD ── */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem 2rem;margin-bottom:1.25rem;transition:border-color .2s}
+.q-meta{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.q-num{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.06em}
+.q-badge{font-size:10px;font-weight:500;padding:3px 9px;border-radius:100px;letter-spacing:.04em}
+.q-difficulty{font-size:10px;color:var(--text3);margin-left:auto}
+.q-text{font-family:'Lora',serif;font-size:17px;font-weight:400;color:var(--text);line-height:1.55;margin-bottom:1.25rem}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);cursor:pointer;transition:all .15s;text-align:left;width:100%;font-family:'Sora',sans-serif;font-size:13px;color:var(--text);line-height:1.5}
+.opt:hover{border-color:var(--accent);background:var(--accent-dim)}
+.opt.correct{border-color:var(--green)!important;background:var(--green-dim)!important;color:var(--green-text)!important}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-dim)!important;color:var(--red-text)!important}
+.opt.reveal{border-color:var(--green);background:var(--green-dim);color:var(--green-text)}
+.opt.disabled{cursor:not-allowed;opacity:.7}
+.opt-letter{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);flex-shrink:0;margin-top:1px}
+.opt.correct .opt-letter,.opt.reveal .opt-letter{border-color:var(--green);color:var(--green-text)}
+.opt.wrong .opt-letter{border-color:var(--red);color:var(--red-text)}
+.q-feedback{font-size:12px;margin-top:10px;padding:8px 12px;border-radius:var(--radius-sm);display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:var(--green-dim);color:var(--green-text);border:1px solid rgba(62,207,142,.2)}
+.q-feedback.ko{background:var(--red-dim);color:var(--red-text);border:1px solid rgba(241,96,96,.2)}
+
+/* ── CONTROLS ── */
+.ctrl-row{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:2rem}
+.ctrl-left{display:flex;gap:8px}
+.btn{font-family:'Sora',sans-serif;font-size:13px;font-weight:400;padding:8px 18px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s}
+.btn:hover{background:var(--surface3);border-color:var(--border2)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn-primary{background:var(--accent);border-color:transparent;color:#fff;font-weight:500}
+.btn-primary:hover{background:#5a7ce8;border-color:transparent}
+svg.ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── SCORE PANEL ── */
+.score-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.score-chips{display:flex;gap:8px}
+.chip{font-size:12px;font-weight:500;padding:4px 12px;border-radius:100px}
+.chip-ok{background:var(--green-dim);color:var(--green-text)}
+.chip-ko{background:var(--red-dim);color:var(--red-text)}
+.chip-skip{background:var(--surface3);color:var(--text2)}
+.score-pct{font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--accent)}
+
+/* ── RESULTS SCREEN ── */
+#results{display:none}
+.results-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;text-align:center;margin-bottom:1.5rem}
+.results-title{font-family:'Lora',serif;font-size:28px;font-weight:600;color:var(--text);margin-bottom:.5rem}
+.results-sub{font-size:14px;color:var(--text2);margin-bottom:2rem}
+.results-big{font-family:'Lora',serif;font-size:64px;font-weight:600;line-height:1;margin-bottom:.5rem}
+.results-mention{font-size:14px;font-weight:500;margin-bottom:2rem}
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:400px;margin:0 auto 2rem}
+.rstat{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem}
+.rstat-n{font-family:'Lora',serif;font-size:24px;font-weight:600;display:block;margin-bottom:2px}
+.rstat-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+
+/* ── QUIZ SCREEN ── */
+#quiz-screen{}
+.q-visible{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border-top:1px solid var(--border)}
+
+@media(max-width:600px){
+  header{padding:1.25rem 1rem 1rem}
+  .header-title{font-size:19px}
+  main{padding:1.25rem 1rem 3rem}
+  .q-card{padding:1.25rem}
+  .q-text{font-size:15px}
+  .header-stats{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="header-eyebrow">HQC · Secondaire 4 · Chapitre 3</div>
+      <div class="header-title">Quizz de révision —<br><em>La modernisation du Québec et la Révolution tranquille</em></div>
+    </div>
+    <div class="header-stats">
+      <div class="hstat">
+        <span class="hstat-n" id="h-total">51</span>
+        <span class="hstat-l">Questions</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-n" id="h-score">0</span>
+        <span class="hstat-l">Score</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-inner">
+    <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-label" id="prog-label">0 / 51</div>
+  </div>
+</div>
+
+<main>
+  <!-- TABS -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- SCORE BAR -->
+  <div class="score-bar">
+    <div class="score-chips">
+      <div class="chip chip-ok">✓ Correct : <span id="sc-ok">0</span></div>
+      <div class="chip chip-ko">✗ Incorrect : <span id="sc-ko">0</span></div>
+      <div class="chip chip-skip">— Non répondu : <span id="sc-skip">0</span></div>
+    </div>
+    <div class="score-pct" id="sc-pct">0 %</div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="ctrl-row">
+    <div class="ctrl-left">
+      <button class="btn" onclick="shuffle()">
+        <svg class="ic" viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        Mélanger
+      </button>
+      <button class="btn" onclick="resetQuiz()">
+        <svg class="ic" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+        Recommencer
+      </button>
+    </div>
+    <button class="btn btn-primary" onclick="showResults()" id="btn-results">
+      Voir mes résultats
+      <svg class="ic" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen"></div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results">
+    <div class="results-card">
+      <div class="results-title">Résultats</div>
+      <div class="results-sub">Quizz HQC — Chapitre 3 — La Révolution tranquille</div>
+      <div class="results-big" id="r-pct">0 %</div>
+      <div class="results-mention" id="r-mention"></div>
+      <div class="results-grid">
+        <div class="rstat"><span class="rstat-n" style="color:var(--green)" id="r-ok">0</span><span class="rstat-l">Corrects</span></div>
+        <div class="rstat"><span class="rstat-n" style="color:var(--red)" id="r-ko">0</span><span class="rstat-l">Incorrects</span></div>
+        <div class="rstat"><span class="rstat-n" style="color:var(--text2)" id="r-skip">0</span><span class="rstat-l">Sautées</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="resetQuiz()" style="margin:0 auto">
+        <svg class="ic" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+        Recommencer le quizz
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer>HQC Secondaire 4 · Chapitre 3 · La modernisation du Québec et la Révolution tranquille (1945–1980)</footer>
+
+<script>
+const CAT_COLORS = {
+  "Après-guerre":{bg:"#1a2540",cl:"#a8baff"},
+  "Duplessis":{bg:"#2a1a1a",cl:"#ffb3b3"},
+  "Révolution tranquille":{bg:"#0d3024",cl:"#7dffc7"},
+  "Bourassa & crises":{bg:"#2a2000",cl:"#ffd580"},
+  "Lévesque & PQ":{bg:"#1e1040",cl:"#c4b5fd"},
+  "Enjeux sociaux":{bg:"#1a1a2e",cl:"#93c5fd"},
+};
+
+const ALL_Q = [
+  // ── APRÈS-GUERRE ──
+  {cat:"Après-guerre", diff:"Facile", q:"Quelle période historique débute immédiatement après la Seconde Guerre mondiale et oppose les États-Unis à l'URSS ?", opts:["La Guerre froide","La Grande Dépression","La Révolution tranquille","Le néonationalisme"], ans:0, expl:"La Guerre froide (1945-1991) est un affrontement idéologique entre le capitalisme américain et le communisme soviétique. Le Canada et le Québec prennent le camp américain."},
+  {cat:"Après-guerre", diff:"Facile", q:"Comment appelle-t-on la forte hausse des naissances observée au Québec entre 1945 et 1960 ?", opts:["L'exode rural","Le bébé-boom","L'urbanisation","La dénatalité"], ans:1, expl:"Le bébé-boom désigne l'explosion des naissances après la guerre. En 1950, 25 % de la population québécoise a 10 ans et moins, ce qui met une pression énorme sur les services sociaux gérés par l'Église."},
+  {cat:"Après-guerre", diff:"Facile", q:"Quelle organisation militaire les sociétés capitalistes et démocratiques fondent-elles après 1945 ?", opts:["L'ONU","L'OTAN","L'URSS","Le FLQ"], ans:1, expl:"L'Organisation du traité de l'Atlantique Nord (OTAN) est fondée en 1949 comme alliance militaire des pays capitalistes occidentaux face à la menace soviétique. Le Canada en est membre fondateur."},
+  {cat:"Après-guerre", diff:"Moyen", q:"Qu'est-ce que la société de consommation qui se développe au Québec dans les années 1950 ?", opts:["Un modèle basé sur l'agriculture et la religion","Un modèle basé sur l'achat de masse, le crédit et la publicité","Un modèle basé sur la nationalisation des ressources","Un modèle basé sur le commerce avec la France"], ans:1, expl:"La hausse du pouvoir d'achat favorise l'achat de réfrigérateurs, laveuses et téléviseurs. Le crédit devient accessible et la publicité est omniprésente. La culture québécoise subit fortement l'influence américaine."},
+  {cat:"Après-guerre", diff:"Moyen", q:"Quel phénomène démographique désigne l'expansion des villes vers leurs banlieues après 1945 ?", opts:["L'exode rural","La dénatalité","L'étalement urbain","L'immigration massive"], ans:2, expl:"L'étalement urbain est causé par le bébé-boom, la hausse du niveau de vie et la popularité de l'automobile. L'État investit dans les routes, autoroutes et le métro pour répondre à cette croissance."},
+  {cat:"Après-guerre", diff:"Moyen", q:"Pourquoi le gouvernement modernise-t-il la voie maritime du Saint-Laurent après 1945 ?", opts:["Pour favoriser l'immigration européenne","Pour répondre à la croissance des échanges entre le Canada et les États-Unis","Pour développer l'hydroélectricité","Pour financer les cégeps"], ans:1, expl:"La croissance des échanges commerciaux entre le Canada et les États-Unis pousse le gouvernement à moderniser la voie maritime du Saint-Laurent afin de faciliter le transport des marchandises."},
+  {cat:"Après-guerre", diff:"Difficile", q:"Quelle est la principale conséquence démographique observée au Québec après 1960, en contraste avec le bébé-boom ?", opts:["Une forte croissance des naissances","Une période de dénatalité causée par la contraception et l'entrée des femmes sur le marché du travail","Une augmentation de l'immigration asiatique","Un retour à la vie rurale"], ans:1, expl:"Après 1960, la perte d'influence de l'Église, l'accès à la contraception (décriminalisée en 1969) et l'entrée massive des femmes sur le marché du travail entraînent une baisse importante du taux de natalité au Québec."},
+
+  // ── DUPLESSIS ──
+  {cat:"Duplessis", diff:"Facile", q:"Quel parti politique dirige Maurice Duplessis au Québec de 1944 à 1960 ?", opts:["Le Parti libéral","Le Parti québécois","L'Union nationale","Le Parti conservateur"], ans:2, expl:"Maurice Duplessis est le chef de l'Union nationale. Il dirige le Québec de 1944 jusqu'à sa mort en 1960, défendant le conservatisme social, le cléricalisme et l'autonomie provinciale."},
+  {cat:"Duplessis", diff:"Facile", q:"En quelle année le drapeau fleurdelisé est-il adopté comme drapeau officiel du Québec ?", opts:["1944","1948","1960","1967"], ans:1, expl:"En 1948, sous le gouvernement Duplessis, le fleurdelisé devient le drapeau officiel du Québec, symbole de l'identité canadienne-française que Duplessis cherchait à protéger."},
+  {cat:"Duplessis", diff:"Facile", q:"En quelle année et dans quelles villes a lieu la célèbre grève de l'amiante ?", opts:["1944, à Montréal et Québec","1949, à Asbestos et Thetford Mines","1960, à Sherbrooke et Trois-Rivières","1972, à Montréal et Laval"], ans:1, expl:"La grève de l'amiante éclate en 1949 à Asbestos et Thetford Mines. Les mineurs réclament de meilleures conditions de travail et une protection contre la poussière d'amiante nocive. Duplessis envoie la police pour réprimer les grévistes."},
+  {cat:"Duplessis", diff:"Moyen", q:"Quelle loi Duplessis utilise-t-il pour réprimer les syndicats et les mouvements communistes ?", opts:["La Loi 101","La Loi du cadenas","La Loi sur les mesures de guerre","La Loi sur les langues officielles"], ans:1, expl:"La Loi du cadenas (1937) permet à la police de fermer (cadenasser) tout local servant au rassemblement de personnes jugées communistes. Elle vise surtout à réprimer le mouvement syndical, associé au communisme dans le contexte de la Guerre froide."},
+  {cat:"Duplessis", diff:"Moyen", q:"Lequel des éléments suivants caractérise la politique économique de Duplessis ?", opts:["La nationalisation des ressources naturelles","Le recours aux entreprises américaines pour le développement économique","La création de sociétés d'État québécoises","L'imposition de tarifs douaniers élevés"], ans:1, expl:"Duplessis fait confiance aux entreprises américaines pour développer l'économie québécoise. Des compagnies américaines exploitent les ressources minières de la Côte-Nord et du Nouveau-Québec, ce que ses critiques lui reprocheront."},
+  {cat:"Duplessis", diff:"Moyen", q:"Quel manifeste publié en 1948 dénonce le conservatisme de l'époque duplessiste et l'influence de l'Église ?", opts:["Le rapport Parent","Le Refus global","La Convention de la Baie-James","La Charte de la langue française"], ans:1, expl:"Le Refus global, signé par le peintre Paul-Émile Borduas et d'autres artistes dont Jean-Paul Riopelle, dénonce le conservatisme de l'époque et l'emprise de l'Église catholique sur la société québécoise. Il préfigure la Révolution tranquille."},
+  {cat:"Duplessis", diff:"Moyen", q:"Quelle est la position de Duplessis face aux syndicats lors de conflits ouvriers ?", opts:["Il appuie les syndicats et négocie avec eux","Il reste neutre et ne s'implique pas","Il appuie le patronat et utilise la police contre les grévistes","Il crée un ministère du Travail pour arbitrer les conflits"], ans:2, expl:"Lors de conflits ouvriers, Duplessis appuie systématiquement le patronat et s'oppose au mouvement syndical. La police provinciale intervient pour empêcher les manifestations et arrêter les grévistes, comme lors de la grève de l'amiante en 1949."},
+  {cat:"Duplessis", diff:"Difficile", q:"Quel principe idéologique guide la relation entre Duplessis et l'Église catholique ?", opts:["Le laïcisme","L'anticléricalisme","Le cléricalisme","Le néonationalisme"], ans:2, expl:"Le cléricalisme désigne l'implication de l'Église dans les affaires publiques. Sous Duplessis, l'Église gère l'éducation, la santé et les services sociaux, et exerce une grande influence politique. L'Union nationale s'appuie sur l'Église pour maintenir l'ordre conservateur."},
+  {cat:"Duplessis", diff:"Difficile", q:"Pour quelle raison principale Duplessis refuse-t-il les subventions fédérales et crée-t-il l'impôt provincial en 1954 ?", opts:["Pour financer les cégeps","Pour défendre l'autonomie provinciale du Québec face au gouvernement fédéral","Pour nationaliser l'électricité","Pour financer les infrastructures de transport"], ans:1, expl:"Duplessis défend farouchement l'autonomie provinciale : il veut que le Québec gère ses propres affaires sans ingérence d'Ottawa. Il refuse les subventions fédérales et crée l'impôt provincial (1954) pour affirmer l'indépendance financière du Québec."},
+
+  // ── RÉVOLUTION TRANQUILLE ──
+  {cat:"Révolution tranquille", diff:"Facile", q:"Qui est le Premier ministre du Québec qui lance la Révolution tranquille en 1960 ?", opts:["Maurice Duplessis","René Lévesque","Robert Bourassa","Jean Lesage"], ans:3, expl:"Jean Lesage, chef du Parti libéral, est élu en 1960 avec le slogan « Maîtres chez nous ». Son gouvernement (1960-1966) engage le Québec dans une modernisation rapide et profonde appelée la Révolution tranquille."},
+  {cat:"Révolution tranquille", diff:"Facile", q:"Quelle entreprise publique est créée en 1962 grâce à la nationalisation de l'électricité ?", opts:["Loto-Québec","La Caisse de dépôt","Hydro-Québec","La SGF"], ans:2, expl:"En 1962, sous l'impulsion de René Lévesque, alors ministre des Ressources naturelles, le gouvernement Lesage rachète les compagnies privées d'électricité pour créer Hydro-Québec. C'est un symbole fort du « Maîtres chez nous »."},
+  {cat:"Révolution tranquille", diff:"Facile", q:"Quel rapport recommande la réforme du système d'éducation québécois sous le gouvernement Lesage ?", opts:["Le rapport Bird","Le rapport Laurendeau-Dunton","Le rapport Parent","Le rapport Bagot"], ans:2, expl:"Le rapport Parent (1963-1966), produit par la Commission royale d'enquête sur l'enseignement, recommande l'école gratuite et obligatoire, la création du ministère de l'Éducation, des polyvalentes, des cégeps et l'expansion du réseau universitaire."},
+  {cat:"Révolution tranquille", diff:"Facile", q:"Qu'est-ce que l'État-providence mis en place pendant la Révolution tranquille ?", opts:["Un État qui laisse l'Église gérer les services sociaux","Un État qui intervient dans le développement économique et social de la population","Un État qui refuse toute aide fédérale","Un État qui favorise uniquement les entreprises privées"], ans:1, expl:"L'État-providence désigne un modèle où l'État prend en charge le développement économique et social. Au Québec, cela se traduit par Hydro-Québec, le ministère de l'Éducation, l'assurance hospitalisation, le régime des rentes et l'aide sociale."},
+  {cat:"Révolution tranquille", diff:"Moyen", q:"Quelle loi adoptée sous Lesage rend les soins de santé accessibles à tous les Québécois ?", opts:["La Loi sur les normes du travail","Le Code du travail","L'assurance hospitalisation","La Loi sur la protection du consommateur"], ans:2, expl:"Le Programme d'assurance hospitalisation rend les soins de santé accessibles à l'ensemble de la population québécoise, financés par l'État. L'hôpital cesse d'être géré par les communautés religieuses et devient une institution publique."},
+  {cat:"Révolution tranquille", diff:"Moyen", q:"Quelle avancée importante la réforme du Code du travail apporte-t-elle sous Lesage ?", opts:["Elle interdit les grèves dans le secteur public","Elle permet aux employés de la fonction publique de se syndiquer","Elle fixe le salaire minimum à 1 $ de l'heure","Elle nationalise toutes les industries du Québec"], ans:1, expl:"La réforme du Code du travail sous Lesage permet aux employés de la fonction publique québécoise de se syndiquer et de négocier collectivement. C'est une rupture majeure avec l'antisyndicalisme de Duplessis."},
+  {cat:"Révolution tranquille", diff:"Moyen", q:"Quelle première femme députée élue au Québec fait adopter la Loi 16 en 1964 ?", opts:["Lise Payette","Pauline Marois","Marie-Claire Kirkland-Casgrain","Thérèse Casgrain"], ans:2, expl:"Marie-Claire Kirkland-Casgrain, première femme élue à l'Assemblée nationale du Québec (1961), fait adopter la Loi 16 (1964) sur la capacité juridique de la femme mariée, lui donnant le droit d'exercer une profession et de gérer ses propres biens."},
+  {cat:"Révolution tranquille", diff:"Moyen", q:"Quel événement de 1967 permet au Québec de s'affirmer comme société moderne sur la scène internationale ?", opts:["La Crise d'Octobre","L'Expo 67","La création des cégeps","La nationalisation de l'électricité"], ans:1, expl:"L'Exposition universelle de 1967 (Expo 67), tenue à Montréal avec le thème « Terre des hommes », permet au Québec de se montrer au monde entier comme une société moderne et dynamique. C'est lors de cet événement que De Gaulle prononce « Vive le Québec libre ! »."},
+  {cat:"Révolution tranquille", diff:"Moyen", q:"Qu'est-ce que le néonationalisme québécois qui se développe dans les années 1960 ?", opts:["Un nationalisme visant à protéger les traditions catholiques","Un nationalisme tourné vers l'indépendance politique du Québec","Un nationalisme favorable à l'union avec les États-Unis","Un nationalisme défendant le bilinguisme canadien"], ans:1, expl:"Le néonationalisme exprime la volonté politique du peuple québécois d'obtenir son indépendance. Différent du nationalisme de survivance, il est tourné vers l'avenir. Plusieurs mouvements souverainistes s'unissent pour former le Parti québécois."},
+  {cat:"Révolution tranquille", diff:"Difficile", q:"Lequel des éléments suivants n'est PAS une réforme de la Révolution tranquille sous Lesage ?", opts:["La nationalisation de l'électricité","La création du ministère de l'Éducation","L'adoption de la Loi 101 sur la langue française","L'assurance hospitalisation"], ans:2, expl:"La Loi 101 (Charte de la langue française) est adoptée en 1977 par le gouvernement de René Lévesque, bien après la Révolution tranquille. Les trois autres mesures sont toutes des réformes du gouvernement Lesage (1960-1966)."},
+  {cat:"Révolution tranquille", diff:"Difficile", q:"Quelles sont les trois principales causes de la Révolution tranquille ?", opts:["La Guerre froide, le bébé-boom et l'immigration","Le nationalisme croissant, la volonté de réduire l'influence de l'Église et le besoin de modernisation","La crise du pétrole, la Crise d'Octobre et le Front commun","L'élection de Trudeau, la création des cégeps et l'Expo 67"], ans:1, expl:"Les trois causes principales sont : 1) Un nationalisme croissant et une volonté de reprendre le contrôle des ressources québécoises ; 2) Une volonté de réduire l'influence de l'Église sur l'éducation et la santé ; 3) Un besoin de réformes pour moderniser la société et l'économie."},
+
+  // ── BOURASSA & CRISES ──
+  {cat:"Bourassa & crises", diff:"Facile", q:"Quel groupe terroriste est responsable de la Crise d'Octobre en 1970 ?", opts:["Le Parti québécois","Le Front de libération du Québec (FLQ)","L'Union nationale","Les chevaliers du travail"], ans:1, expl:"Le Front de libération du Québec (FLQ) est un groupe qui recourt à la violence pour obtenir l'indépendance du Québec. En octobre 1970, il kidnappe le diplomate britannique James Cross et le ministre Pierre Laporte."},
+  {cat:"Bourassa & crises", diff:"Facile", q:"Quelle loi le gouvernement fédéral de Trudeau impose-t-il lors de la Crise d'Octobre 1970 ?", opts:["La Loi sur les langues officielles","La Loi sur les normes du travail","La Loi sur les mesures de guerre","La Loi sur la protection du consommateur"], ans:2, expl:"Le 16 octobre 1970, Pierre Elliott Trudeau invoque la Loi sur les mesures de guerre, permettant à l'armée d'être déployée au Québec et aux forces policières d'arrêter des suspects sans mandat. Des centaines d'arrestations abusives ont lieu."},
+  {cat:"Bourassa & crises", diff:"Facile", q:"En quelle année a lieu la crise du pétrole qui frappe l'économie québécoise et mondiale ?", opts:["1967","1970","1972","1973"], ans:3, expl:"La crise du pétrole de 1973 est causée par la décision des pays de l'OPEP de réduire leur production pétrolière, ce qui fait monter en flèche les prix du pétrole et ralentit l'économie mondiale, y compris celle du Québec."},
+  {cat:"Bourassa & crises", diff:"Moyen", q:"Comment appelle-t-on la grève illimitée déclenchée en 1972 par les trois grandes centrales syndicales québécoises ?", opts:["La grève de l'amiante","Le Front commun","La Crise d'Octobre","Le mouvement souverainiste"], ans:1, expl:"Le Front commun regroupe la CEQ, la CSN et la FTQ qui déclenchent une grève illimitée des employés de l'État en 1972. Leur objectif : obtenir de meilleures conditions de travail et une meilleure répartition des richesses. Le gouvernement Bourassa répond par des injonctions."},
+  {cat:"Bourassa & crises", diff:"Moyen", q:"Pourquoi le gouvernement Bourassa lance-t-il les grands travaux hydroélectriques de la Baie-James ?", opts:["Pour respecter les droits ancestraux des autochtones","Pour stimuler la croissance économique et créer des emplois, notamment après la crise du pétrole","Pour mettre en œuvre les recommandations du rapport Parent","Pour satisfaire les demandes du Front commun"], ans:1, expl:"Bourassa vise le développement du potentiel hydroélectrique de la Baie-James pour stimuler la croissance économique du Québec, créer des emplois et réduire la dépendance au pétrole, surtout après la crise de 1973."},
+  {cat:"Bourassa & crises", diff:"Moyen", q:"Que prévoit la Convention de la Baie-James et du Nord québécois signée en 1975 ?", opts:["La création du Parti québécois","Un règlement hors cour des poursuites des Cris et Inuits, avec compensations financières et droits territoriaux","La nationalisation de l'hydroélectricité","La protection des terres agricoles du Québec"], ans:1, expl:"La Convention de la Baie-James (1975) permet aux Cris et Inuits d'abandonner leurs poursuites judiciaires contre le projet hydroélectrique en échange de compensations financières (225 millions $) et de droits de chasse, de pêche et d'une certaine autonomie territoriale."},
+  {cat:"Bourassa & crises", diff:"Moyen", q:"Quelle loi linguistique Bourassa adopte-t-il en 1974 qui fait du français la seule langue officielle du Québec ?", opts:["La Loi 101","La Loi 22","La Loi sur les langues officielles","La Loi 16"], ans:1, expl:"La Loi 22 (1974), adoptée par le gouvernement Bourassa, fait du français la seule langue officielle du Québec et limite l'accès aux écoles anglophones par des tests linguistiques. C'est une première étape, approfondie ensuite par la Loi 101 en 1977."},
+  {cat:"Bourassa & crises", diff:"Difficile", q:"Quelle était la revendication principale des peuples autochtones face au projet de la Baie-James ?", opts:["Ils voulaient travailler sur les chantiers de construction","Ils revendiquaient leurs droits ancestraux sur le territoire inondé et une autonomie politique","Ils demandaient la création de nouvelles réserves en dehors du territoire","Ils souhaitaient que le projet soit abandonné définitivement"], ans:1, expl:"Les Cris et Inuits revendiquaient la reconnaissance de leurs droits ancestraux sur les terres inondées par le projet, une plus grande autonomie politique et des compensations financières pour le bouleversement de leur mode de vie traditionnel (chasse, pêche)."},
+  {cat:"Bourassa & crises", diff:"Difficile", q:"Quels sont les deux ministres ou diplomates kidnappés par le FLQ lors de la Crise d'Octobre 1970 ?", opts:["René Lévesque et Robert Bourassa","Pierre Laporte et James Cross","Jean Lesage et Pierre Elliott Trudeau","Pierre Laporte et René Lévesque"], ans:1, expl:"Le 5 octobre 1970, le FLQ kidnappe le diplomate britannique James Cross. Le 10 octobre, il kidnappe le ministre québécois Pierre Laporte, qui sera retrouvé mort le 17 octobre dans le coffre d'une voiture."},
+
+  // ── LÉVESQUE & PQ ──
+  {cat:"Lévesque & PQ", diff:"Facile", q:"En quelle année le Parti québécois de René Lévesque est-il élu pour la première fois au pouvoir ?", opts:["1970","1973","1976","1980"], ans:2, expl:"En 1976, le Parti québécois remporte les élections provinciales pour la première fois, avec René Lévesque comme Premier ministre. C'est la première fois qu'un parti souverainiste accède au pouvoir au Québec."},
+  {cat:"Lévesque & PQ", diff:"Facile", q:"Comment s'appelle la loi adoptée en 1977 qui renforce la protection du français au Québec ?", opts:["La Loi 22","La Loi sur les langues officielles","La Charte de la langue française (Loi 101)","La Loi sur les normes du travail"], ans:2, expl:"La Charte de la langue française (Loi 101), adoptée par le gouvernement Lévesque en 1977, renforce la protection du français dans tous les domaines : travail, affichage commercial et accès aux écoles anglophones."},
+  {cat:"Lévesque & PQ", diff:"Facile", q:"Quel est le résultat du référendum de 1980 sur la souveraineté-association du Québec ?", opts:["50,1 % OUI — 49,9 % NON","59,56 % NON — 40,44 % OUI","60 % OUI — 40 % NON","55 % NON — 45 % OUI"], ans:1, expl:"Le référendum du 20 mai 1980 se solde par une victoire du NON : 59,56 % des Québécois votent contre la souveraineté-association, et 40,44 % votent pour. C'est une défaite pour René Lévesque et le Parti québécois."},
+  {cat:"Lévesque & PQ", diff:"Moyen", q:"Quelle loi adoptée par Lévesque en 1979 établit des règles minimales de travail pour tous les employeurs québécois ?", opts:["La Loi sur le financement des partis politiques","La Loi sur la protection du territoire agricole","La Loi sur les normes du travail","La Charte des droits et libertés de la personne"], ans:2, expl:"La Loi sur les normes du travail (1979) établit un salaire minimum, un nombre maximal d'heures de travail par semaine et un congé de maternité, s'appliquant à tous les employeurs québécois, qu'ils soient syndiqués ou non."},
+  {cat:"Lévesque & PQ", diff:"Moyen", q:"Quelle loi adoptée par Lévesque vise à rendre le financement politique plus transparent en interdisant les dons des entreprises ?", opts:["La Loi sur les normes du travail","La Loi sur le financement des partis politiques","La Loi 101","La Loi sur la protection du territoire agricole"], ans:1, expl:"La Loi sur le financement des partis politiques (1977) interdit les dons des entreprises aux partis et limite les contributions individuelles. Seuls les électeurs québécois peuvent financer les partis, ce qui vise à protéger la démocratie contre l'influence des grandes entreprises."},
+  {cat:"Lévesque & PQ", diff:"Moyen", q:"Quelle loi adoptée en 1978 protège les terres agricoles québécoises contre l'étalement urbain ?", opts:["La Loi sur les normes du travail","La Loi sur le financement des partis politiques","La Loi 101","La Loi sur la protection du territoire agricole"], ans:3, expl:"La Loi sur la protection du territoire agricole (1978) interdit la conversion des terres agricoles en zones urbanisées ou industrielles. Elle crée la Commission de protection du territoire agricole du Québec (CPTAQ) pour surveiller l'application de la loi."},
+  {cat:"Lévesque & PQ", diff:"Difficile", q:"Qu'est-ce que la souveraineté-association proposée par René Lévesque et le Parti québécois ?", opts:["L'indépendance totale du Québec sans aucun lien avec le Canada","Un projet d'union politique entre le Québec et la France","Un projet où le Québec serait souverain politiquement mais maintiendrait une association économique avec le Canada","Une simple réforme de la Constitution canadienne"], ans:2, expl:"La souveraineté-association est le projet central du PQ : le Québec deviendrait un État souverain (indépendant politiquement), mais maintiendrait une association économique avec le Canada (monnaie commune, libre-échange). Ce projet est soumis au référendum de 1980."},
+  {cat:"Lévesque & PQ", diff:"Difficile", q:"Quelle est la conséquence démographique directe de l'adoption de la Loi 101 en 1977 ?", opts:["Une forte augmentation de l'immigration francophone","Le départ d'environ 90 000 anglophones vers d'autres provinces","Une hausse du taux de natalité québécois","Une augmentation des immigrants d'Asie du Sud-Est"], ans:1, expl:"L'adoption de la Loi 101 crée un sentiment d'insécurité dans la communauté anglophone du Québec. Environ 90 000 anglophones quittent la province pour s'installer principalement en Ontario, ce qui modifie significativement la composition linguistique du Québec."},
+
+  // ── ENJEUX SOCIAUX ──
+  {cat:"Enjeux sociaux", diff:"Facile", q:"Quel rapport gouvernemental de 1970 porte sur la condition des femmes au Canada ?", opts:["Le rapport Parent","Le rapport Laurendeau-Dunton","Le rapport Bird","Le rapport Bagot"], ans:2, expl:"Le rapport de la Commission royale d'enquête sur la situation de la femme au Canada, dit rapport Bird (1970), documente les inégalités vécues par les femmes et formule des recommandations pour améliorer leur situation dans les domaines du travail, de l'éducation et du droit."},
+  {cat:"Enjeux sociaux", diff:"Facile", q:"Quelle commission fédérale produit un rapport menant à l'adoption de la Loi sur les langues officielles en 1969 ?", opts:["La Commission Bagot","La Commission Bird","La Commission Laurendeau-Dunton","La Commission Parent"], ans:2, expl:"La Commission royale d'enquête sur le bilinguisme et le biculturalisme, dite Commission Laurendeau-Dunton, produit un rapport qui mène à l'adoption de la Loi sur les langues officielles (1969) par le gouvernement Trudeau, faisant de l'anglais et du français les deux langues officielles du Canada."},
+  {cat:"Enjeux sociaux", diff:"Moyen", q:"Quelle est la situation des peuples autochtones face à l'exploitation des ressources naturelles sur leur territoire ?", opts:["Ils en tirent des bénéfices économiques importants grâce à des ententes","Ils profitent peu de l'exploitation et revendiquent une plus grande autonomie et des compensations","Ils gèrent eux-mêmes l'exploitation sous supervision fédérale","Ils ont obtenu la propriété exclusive de leurs ressources naturelles"], ans:1, expl:"Les peuples autochtones profitent peu de l'exploitation des ressources naturelles présentes sur leur territoire. Ils revendiquent une plus grande autonomie politique, la reconnaissance de leurs droits ancestraux et des compensations financières. La Convention de la Baie-James (1975) est une réponse partielle à ces revendications."},
+  {cat:"Enjeux sociaux", diff:"Moyen", q:"Quelle loi fédérale adoptée en 1976 élargit les critères d'admissibilité à l'immigration au Canada ?", opts:["La Loi sur les langues officielles","La Loi fédérale sur l'immigration","La Loi sur les mesures de guerre","La Convention de la Baie-James"], ans:1, expl:"La Loi fédérale sur l'immigration de 1976 élargit les critères d'admissibilité à l'immigration. En 1978, le Québec signe une entente avec le gouvernement fédéral pour choisir lui-même le nombre d'immigrants et les sélectionner, diversifiant les origines des nouveaux arrivants."},
+  {cat:"Enjeux sociaux", diff:"Moyen", q:"Quelle charte québécoise adoptée en 1975 protège les droits fondamentaux de toute personne au Québec ?", opts:["La Charte canadienne des droits et libertés","La Charte de la langue française","La Charte des droits et libertés de la personne du Québec","La Convention de la Baie-James"], ans:2, expl:"La Charte des droits et libertés de la personne du Québec (1975), adoptée par le gouvernement Bourassa, protège les droits fondamentaux : vie, intégrité, liberté, égalité sans discrimination. Elle précède la Charte canadienne des droits et libertés de 1982."},
+  {cat:"Enjeux sociaux", diff:"Moyen", q:"Quel est le principal objectif des revendications féministes au Québec dans les années 1960 et 1970 ?", opts:["Retourner aux valeurs traditionnelles de l'Église","Obtenir l'égalité juridique, professionnelle et sociale avec les hommes","Obtenir la souveraineté du Québec","Réduire l'immigration au Québec"], ans:1, expl:"Les revendications féministes visent : la réforme du Code civil, un meilleur accès aux études et aux professions masculines, l'équité salariale, le droit au divorce, à la contraception et à l'avortement, et la mise en place de garderies. La Loi 16 (1964) et la Loi sur les normes du travail (1979) sont des réponses partielles."},
+  {cat:"Enjeux sociaux", diff:"Difficile", q:"Quelle était la principale conséquence de l'enseignement imposé dans les pensionnats autochtones au Québec ?", opts:["Un accès accru à l'éducation postsecondaire pour les autochtones","L'assimilation culturelle des peuples autochtones et le déclin de leurs cultures traditionnelles","Un renforcement de l'identité autochtone","Une meilleure intégration des autochtones dans l'économie de marché"], ans:1, expl:"Les pensionnats autochtones, où les enfants étaient retirés de leurs familles et forcés d'apprendre en français ou en anglais, visaient à assimiler les peuples autochtones en effaçant leurs langues, cultures et traditions. Cela a causé le bouleversement du mode de vie traditionnel et le déclin des cultures autochtones."},
+  {cat:"Enjeux sociaux", diff:"Difficile", q:"Pourquoi la période après 1960 est-elle marquée par une forte diversification des origines des immigrants au Québec ?", opts:["Parce que l'immigration européenne augmente encore davantage","Parce que la dénatalité et la croissance économique attirent des immigrants de régions plus variées, et que les lois d'immigration s'ouvrent","Parce que le gouvernement Duplessis favorise une immigration diversifiée","Parce que la Loi 101 attire des francophones du monde entier"], ans:1, expl:"La baisse de la natalité (dénatalité) et les besoins économiques poussent le Québec à accueillir plus d'immigrants. La Loi fédérale sur l'immigration de 1976 élargit les critères. En 1978, le Québec obtient le droit de sélectionner ses immigrants, favorisant une plus grande diversité d'origines."},
+];
+
+const CATS = ["Toutes","Après-guerre","Duplessis","Révolution tranquille","Bourassa & crises","Lévesque & PQ","Enjeux sociaux"];
+
+let questions = [...ALL_Q];
+let answered = {};
+let activeFilter = "Toutes";
+
+function applyFilter(cat) {
+  activeFilter = cat;
+  questions = cat === "Toutes" ? [...ALL_Q] : ALL_Q.filter(q => q.cat === cat);
+  answered = {};
+  renderTabs();
+  renderQuestions();
+  updateScore();
+  updateProgress();
+}
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = CATS.map(c =>
+    `<button class="tab${activeFilter===c?" active":""}" onclick="applyFilter('${c}')">${c} ${c!=="Toutes"?"("+ALL_Q.filter(q=>q.cat===c).length+")":""}</button>`
+  ).join("");
+}
+
+function renderQuestions() {
+  const el = document.getElementById("quiz-screen");
+  el.innerHTML = questions.map((q, i) => {
+    const col = CAT_COLORS[q.cat] || {bg:"#1a1d27",cl:"#a8baff"};
+    const diffCol = q.diff === "Facile" ? "var(--green)" : q.diff === "Moyen" ? "var(--amber)" : "var(--red)";
+    return `
+    <div class="q-card q-visible" id="qcard-${i}">
+      <div class="q-meta">
+        <span class="q-num">Q${i+1}</span>
+        <span class="q-badge" style="background:${col.bg};color:${col.cl}">${q.cat}</span>
+        <span class="q-difficulty" style="color:${diffCol}">● ${q.diff}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((o,j) => `
+          <button class="opt" id="opt-${i}-${j}" onclick="answer(${i},${j})">
+            <span class="opt-letter">${['A','B','C','D'][j]}</span>
+            <span>${o}</span>
+          </button>
+        `).join("")}
+      </div>
+      <div class="q-feedback" id="fb-${i}"></div>
+    </div>`;
+  }).join("");
+}
+
+function answer(qi, oi) {
+  if (answered[qi] !== undefined) return;
+  answered[qi] = oi;
+  const q = questions[qi];
+  const opts = document.querySelectorAll(`#qcard-${qi} .opt`);
+  opts.forEach((btn, j) => {
+    btn.classList.add("disabled");
+    btn.onclick = null;
+    if (j === q.ans) btn.classList.add("correct");
+    else if (j === oi && oi !== q.ans) btn.classList.add("wrong");
+  });
+  const fb = document.getElementById(`fb-${qi}`);
+  fb.classList.add("show");
+  if (oi === q.ans) {
+    fb.classList.add("ok");
+    fb.textContent = "✓ Correct ! " + q.expl;
+  } else {
+    fb.classList.add("ko");
+    fb.textContent = "✗ Incorrect. " + q.expl;
+  }
+  updateScore();
+  updateProgress();
+}
+
+function updateScore() {
+  const ok = Object.entries(answered).filter(([qi,oi]) => questions[+qi]?.ans === oi).length;
+  const ko = Object.entries(answered).filter(([qi,oi]) => questions[+qi]?.ans !== oi).length;
+  const skip = questions.length - Object.keys(answered).length;
+  const total = Object.keys(answered).length;
+  const pct = total > 0 ? Math.round(ok / total * 100) : 0;
+  document.getElementById("sc-ok").textContent = ok;
+  document.getElementById("sc-ko").textContent = ko;
+  document.getElementById("sc-skip").textContent = skip;
+  document.getElementById("sc-pct").textContent = pct + " %";
+  document.getElementById("h-score").textContent = pct + " %";
+}
+
+function updateProgress() {
+  const done = Object.keys(answered).length;
+  const total = questions.length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById("prog-fill").style.width = pct + "%";
+  document.getElementById("prog-label").textContent = done + " / " + total;
+  document.getElementById("h-total").textContent = total;
+}
+
+function showResults() {
+  const ok = Object.entries(answered).filter(([qi,oi]) => questions[+qi]?.ans === oi).length;
+  const ko = Object.entries(answered).filter(([qi,oi]) => questions[+qi]?.ans !== oi).length;
+  const skip = questions.length - Object.keys(answered).length;
+  const total = Object.keys(answered).length;
+  const pct = total > 0 ? Math.round(ok / total * 100) : 0;
+  let mention = "", color = "var(--text2)";
+  if (pct >= 90) { mention = "Excellent ! Maîtrise parfaite du chapitre."; color = "var(--green)"; }
+  else if (pct >= 75) { mention = "Très bien ! Quelques notions à revoir."; color = "var(--accent)"; }
+  else if (pct >= 60) { mention = "Bien. Continuez à réviser les points faibles."; color = "var(--amber)"; }
+  else { mention = "À revoir. Reprenez les flashcards pour consolider."; color = "var(--red)"; }
+  document.getElementById("r-pct").textContent = pct + " %";
+  document.getElementById("r-pct").style.color = color;
+  document.getElementById("r-mention").textContent = mention;
+  document.getElementById("r-mention").style.color = color;
+  document.getElementById("r-ok").textContent = ok;
+  document.getElementById("r-ko").textContent = ko;
+  document.getElementById("r-skip").textContent = skip;
+  document.getElementById("quiz-screen").style.display = "none";
+  document.getElementById("results").style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function shuffle() {
+  const cat = activeFilter;
+  let pool = cat === "Toutes" ? [...ALL_Q] : ALL_Q.filter(q => q.cat === cat);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  questions = pool;
+  answered = {};
+  document.getElementById("quiz-screen").style.display = "block";
+  document.getElementById("results").style.display = "none";
+  renderQuestions();
+  updateScore();
+  updateProgress();
+}
+
+function resetQuiz() {
+  const cat = activeFilter;
+  questions = cat === "Toutes" ? [...ALL_Q] : ALL_Q.filter(q => q.cat === cat);
+  answered = {};
+  document.getElementById("quiz-screen").style.display = "block";
+  document.getElementById("results").style.display = "none";
+  renderQuestions();
+  updateScore();
+  updateProgress();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+renderTabs();
+renderQuestions();
+updateScore();
+updateProgress();
+</script>
+</body>
+</html>
